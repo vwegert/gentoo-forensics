@@ -37,7 +37,7 @@ Some of the packages are not part of the main repository, but have to be pulled 
 
 ### Additional Packages
 
-Be aware that most of the packages are masked as *testing* - read [this page on how to accept keywords for an individual package] to understand what that means and how to install these packages anyway. **DO NOT set any of the testing flags globally** unless you know what you're doing (and if you try to do that, you don't).
+Be aware that most of the packages are masked as *testing* - read [this page](https://wiki.gentoo.org/wiki/Knowledge_Base:Accepting_a_keyword_for_a_single_package) on how to accept keywords for an individual package] to understand what that means and how to install these packages anyway. **DO NOT set any of the testing flags globally** unless you know what you're doing (and if you try to do that, you don't).
 
 Also, it is a good idea to install all packages using `emerge -av` so that you can see the state of the USE flags and find out which other options you might want to enable.
 
@@ -88,7 +88,7 @@ The tool bulk_extractor has a few additional capabilites and a GUI that can be e
 app-forensics/bulk_extractor beviewer exiv2 hashdb doc
 ```
 
-If you don't want the GUI (which pull in a Java Runtime Environment), just omit the `beviewer` flag. Then install the tool:
+If you don't want the GUI (which pulls in a Java Runtime Environment), just omit the `beviewer` flag. Then install the tool:
 
 ```
 # emerge -av --autounmask=y --autounmask-write app-forensics/bulk_extractor
