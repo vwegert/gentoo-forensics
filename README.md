@@ -1,10 +1,8 @@
 # Gentoo for Forensics
 
-Or "How to prepare a Gentoo system with the tools required to perform forensic investigations."
+Or "How to prepare a Gentoo system with the tools required to perform forensic investigations." Why would you want to do that? Gentoo makes it relatively easy to keep the tools updated to the latest version, which is very desirable for this application.
 
-TODO: Intro
-
-Be aware that installing a Gentoo Linux system can be quite challenging and time-consuming if you've never used a Linux system before. Even if you know what you're doing, the entire installation process might take you up to TODO, depending on your hardware. If you don't know a lot about Linux system internals, use a day off and ensure sufficient caffeine supply. You will learn a lot about the assembly and inner workings of a Linux system, which is never a bad thing if you want to do forensic investigations.
+Be aware that installing a Gentoo Linux system can be quite challenging and time-consuming if you've never used a Linux system before. Even if you know what you're doing, the entire installation process might take you up to a day, depending on your hardware. If you don't know a lot about Linux system internals, use a day off and ensure sufficient caffeine supply. You will learn a lot about the assembly and inner workings of a Linux system, which is never a bad thing if you want to do forensic investigations.
 
 Finally, if you find any errors or would like to add to this guide, feel free to fork the repo and submit a pull request. 
 
@@ -20,7 +18,6 @@ General notes:
  * It is recommended to use a Desktop profile - some of the tools installed later on are GUI tools.
  * You will have to install a [desktop environment](https://wiki.gentoo.org/wiki/Desktop_environment) like Xfce after the basic system setup to get full GUI functionality. You'll probably also want to install a [display manager](https://wiki.gentoo.org/wiki/Display_manager).
  * From here on, `#` denotes a root prompt and `$` denotes a user prompt.
-
 
 Some notes regarding the installation are collected in the following sub-chapters.
 
@@ -44,17 +41,30 @@ Be aware that most of the packages are masked as *testing* - read [this page on 
 
 Also, it is a good idea to install all packages using `emerge -av` so that you can see the state of the USE flags and find out which other options you might want to enable.
 
+#### Kernel upgrade
+
+At the time this is being written, Kernel 6.x is still experimental. It is desirable to use this version nonetheless because of the integrated NTFS driver. To use it, add a file `/etc/portage/package.accept_keywords/kernels` with the following contents, substituting your architecture if needed:
+
+```
+sys-kernel/gentoo-kernel ~amd64
+virtual/dist-kernel  ~amd64
+```
+
+Upgrading all packages should pull in the newest kernel now.
+
 #### Main Repository
 
 Install the following additional packages from the main repository:
 
 ```
 # emerge -av app-admin/sudo 
+# emerge -av app-editors/vim # includes xxd
 # emerge -av app-forensics/afflib 
 # emerge -av app-forensics/foremost 
 # emerge -av app-forensics/sleuthkit 
 # emerge -av app-misc/binwalk 
 # emerge -av app-mobilephone/heimdall
+# emerge -av dev-db/sqlitebrowser
 # emerge -av dev-util/android-tools
 # emerge -av dev-util/xxdiff
 # emerge -av media-gfx/exiv2 
@@ -68,7 +78,20 @@ Install the following additional packages from the main repository:
 # emerge -av sys-fs/xfsprogs 
 # emerge -av sys-process/lsof
 # emerge -av x11-misc/grsync
+# emerge -av --autounmask=y --autounmask-write dev-util/radare2
 # emerge -av --autounmask=y --autounmask-write net-analyzer/tcpflow
+```
+
+The tool bulk_extractor has a few additional capabilites and a GUI that can be enabled with USE flags. To do so, create a file `/etc/portage/package.use/bulk_extractor` with the following content:
+
+```
+app-forensics/bulk_extractor beviewer exiv2 hashdb doc
+```
+
+If you don't want the GUI (which pull in a Java Runtime Environment), just omit the `beviewer` flag. Then install the tool:
+
+```
+# emerge -av --autounmask=y --autounmask-write app-forensics/bulk_extractor
 ```
 
 Also install the following Python packages globally:
@@ -95,10 +118,32 @@ Enable the repository like this:
 Install the following additional packages from the pentoo repository:
 
 ```
-# emerge -av --autounmask=y --autounmask-write app-forensics/libvshadow 
+# emerge -av --autounmask=y --autounmask-write app-forensics/libscca
+# emerge -av --autounmask=y --autounmask-write app-forensics/libvshadow
 # emerge -av --autounmask=y --autounmask-write app-forensics/scalpel 
 # emerge -av --autounmask=y --autounmask-write app-forensics/xmount 
 # emerge -av --autounmask=y --autounmask-write dev-libs/libvhdi 
+```
+
+#### Additional tools from 4nykey
+
+Enable the repository like this:
+
+```
+# eselect repository enable 4nykey
+# emaint sync -r 4nykey
+```
+
+For `sys-block/partclone`, you may want to set specific USE flags for filesystem support. To enable all features, set the following line in `/etc/portage/package.use/partclone`:
+
+```
+sys-block/partclone apfs btrfs e2fs exfat f2fs fat fuse hfs minix nilfs2 ntfs reiser4 reiserfs xfs
+```
+
+Then install the following additional packages from the repository:
+
+```
+# emerge -av --autounmask=y --autounmask-write sys-block/partclone 
 ```
 
 #### Kazam for screen recording
