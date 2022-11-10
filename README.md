@@ -43,14 +43,20 @@ Also, it is a good idea to install all packages using `emerge -av` so that you c
 
 #### Kernel upgrade
 
-At the time this is being written, Kernel 6.x is still experimental. It is desirable to use this version nonetheless because of the integrated NTFS driver. To use it, add a file `/etc/portage/package.accept_keywords/kernels` with the following contents, substituting your architecture if needed:
+At the time this is being written, Kernel 6.x is still experimental. It is desirable to use this version nonetheless because of the integrated NTFS driver. To use the new kernel, add a file `/etc/portage/package.accept_keywords/kernels` with the following contents, substituting your architecture if needed:
 
 ```
 sys-kernel/gentoo-kernel ~amd64
 virtual/dist-kernel  ~amd64
 ```
 
-Upgrading all packages should pull in the newest kernel now.
+Upgrading all packages should pull in the newest kernel now. In order to use the NTFS read-write driver, you might need to execute 
+
+```
+# modprobe ntfs3
+```
+
+manually.
 
 #### Main Repository
 
@@ -62,6 +68,7 @@ Install the following additional packages from the main repository:
 # emerge -av app-forensics/afflib 
 # emerge -av app-forensics/foremost 
 # emerge -av app-forensics/sleuthkit 
+# emerge -av app-forensics/volatility3 
 # emerge -av app-misc/binwalk 
 # emerge -av app-mobilephone/heimdall
 # emerge -av dev-db/sqlitebrowser
@@ -71,13 +78,16 @@ Install the following additional packages from the main repository:
 # emerge -av media-gfx/feh 
 # emerge -av net-analyzer/hping
 # emerge -av net-analyzer/tcpdump 
+# emerge -av net-analyzer/wireshark 
 # emerge -av net-wireless/iw
 # emerge -av net-fs/nfs-utils
 # emerge -av net-fs/sshfs
 # emerge -av sys-block/gparted
+# emerge -av sys-fs/f2fs-tools 
 # emerge -av sys-fs/xfsprogs 
 # emerge -av sys-process/lsof
 # emerge -av x11-misc/grsync
+# emerge -av --autounmask=y --autounmask-write net-mail/libpst
 # emerge -av --autounmask=y --autounmask-write dev-util/radare2
 # emerge -av --autounmask=y --autounmask-write net-analyzer/tcpflow
 ```
@@ -93,6 +103,8 @@ If you don't want the GUI (which pulls in a Java Runtime Environment), just omit
 ```
 # emerge -av --autounmask=y --autounmask-write app-forensics/bulk_extractor
 ```
+
+You may want to check the USE flags set for `net-analyzer/wireshark` as well.
 
 Also install the following Python packages globally:
 
